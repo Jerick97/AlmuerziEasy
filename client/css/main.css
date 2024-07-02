@@ -1,0 +1,7 @@
+body {
+	background-color: #eee;
+}
+
+.selected {
+	color: #fd0000;
+}
