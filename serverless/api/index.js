@@ -6,6 +6,7 @@ const cors = require("cors");
 
 const meals = require("./routes/meals");
 const orders = require("./routes/orders");
+const auth = require("./routes/auth");
 const app = express();
 
 const port = process.env.PORT || 3000;
@@ -26,6 +27,7 @@ app.use(cors());
 // Mount the /api/meals router
 app.use("/api/meals", meals);
 app.use("/api/orders", orders);
+app.use("/api/auth", auth);
 
 // Handle root requests by redirecting to /api/meals
 app.get("/", (req, res) => {
