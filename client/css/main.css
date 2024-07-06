@@ -1,7 +1,12 @@
 body {
 	background-color: #eee;
+	height: 100vh;
 }
 
 .selected {
 	color: #fd0000;
+}
+
+.hidden {
+	display: none;
 }

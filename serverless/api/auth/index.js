@@ -6,7 +6,7 @@ const Users = require("../models/Users");
 const isAuthenticated = (req, res, next) => {
 	const token = req.headers.authorization;
 	if (!token) {
-		return res.sendStatus(403);
+		return res.status(401).send("No token provided");
 	}
 	jwt.verify(token, "mi-secreto", (err, decoded) => {
 		const { _id } = decoded;

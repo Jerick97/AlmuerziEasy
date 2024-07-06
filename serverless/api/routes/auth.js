@@ -6,13 +6,10 @@ const { isAuthenticated } = require("../auth");
 
 const router = express.Router();
 
-const signToken = (_id) => {
-	return (
-		jwt.sign({ _id }, "mi-secreto"),
-		{
-			expiresIn: 60 * 60 * 24 * 365, //1 año
-		}
-	);
+const signToken = (userId) => {
+	return jwt.sign({ _id: userId }, "mi-secreto", {
+		expiresIn: 60 * 60 * 24 * 365, // 1 año
+	});
 };
 
 router.post("/register", (req, res) => {
@@ -25,14 +22,14 @@ router.post("/register", (req, res) => {
 				.exec()
 				.then((user) => {
 					if (user) {
-						return res.send("usuario ya existe");
+						return res.json({ message: "usuario ya existe" });
 					}
 					Users.create({
 						email,
 						password: encryptedPassword,
 						salt: newSalt,
 					}).then(() => {
-						res.status(201).send("usuario creado con éxito");
+						res.status(201).json({ message: "usuario creado con éxito" });
 					});
 				});
 		});
@@ -45,21 +42,41 @@ router.post("/login", (req, res) => {
 		.exec()
 		.then((user) => {
 			if (!user) {
-				return res.send("usuario y/o contraseña incorrecta");
+				return res
+					.status(401)
+					.json({ message: "usuario y/o contraseña incorrecta" });
 			}
 			crypto.pbkdf2(password, user.salt, 10000, 64, "sha1", (err, key) => {
 				const encryptedPassword = key.toString("base64");
 				if (user.password === encryptedPassword) {
 					const token = signToken(user._id);
-					return res.send({ token });
+					return res.status(200).json({ token: token });
 				}
-				return res.send("usuario y/o contraseña incorrecta");
+				return res
+					.status(401)
+					.json({ message: "usuario y/o contraseña incorrecta" });
 			});
 		});
 });
 
 router.get("/me", isAuthenticated, (req, res) => {
-	res.send(req.user);
+	const { password, salt, ...userWithoutSensitiveInfo } = req.user._doc;
+	res.send(userWithoutSensitiveInfo);
+});
+
+// Ruta para obtener todos los usuarios
+router.get("/users", isAuthenticated, (req, res) => {
+	Users.find()
+		.then((users) => {
+			const usersWithoutSensitiveInfo = users.map((user) => {
+				const { password, salt, ...userWithoutSensitiveInfo } = user._doc;
+				return userWithoutSensitiveInfo;
+			});
+			res.status(200).send(usersWithoutSensitiveInfo);
+		})
+		.catch((error) => {
+			res.status(500).send("Error al obtener los usuarios");
+		});
 });
 
 module.exports = router;
