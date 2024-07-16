@@ -1,0 +1,35 @@
+{
+	"version": 2,
+	"builds": [
+		{
+			"src": "index.html",
+			"use": "@vercel/static"
+		},
+		{
+			"src": "assets/**/*",
+			"use": "@vercel/static"
+		},
+		{
+			"src": "templates/**/*",
+			"use": "@vercel/static"
+		},
+		{
+			"src": "chef2.ico",
+			"use": "@vercel/static"
+		}
+	],
+	"routes": [
+		{
+			"src": "/",
+			"dest": "/index.html"
+		},
+		{
+			"src": "/assets/(.*)",
+			"dest": "/assets/$1"
+		},
+		{
+			"src": "/chef2.ico",
+			"dest": "/chef2.ico"
+		}
+	]
+}

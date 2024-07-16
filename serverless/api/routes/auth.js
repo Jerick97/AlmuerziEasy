@@ -75,7 +75,22 @@ router.get("/users", isAuthenticated, (req, res) => {
 			res.status(200).send(usersWithoutSensitiveInfo);
 		})
 		.catch((error) => {
-			res.status(500).send("Error al obtener los usuarios");
+			res.status(500).send({ message: "Error al obtener los usuarios" });
+		});
+});
+
+// Ruta para eliminar un usuario por ID
+router.delete("/users/:id", isAuthenticated, (req, res) => {
+	const userId = req.params.id;
+	Users.findByIdAndDelete(userId)
+		.then((deletedUser) => {
+			if (!deletedUser) {
+				return res.status(404).send({ message: "Usuario no encontrado" });
+			}
+			res.status(200).send({ message: "Usuario eliminado con éxito" });
+		})
+		.catch((error) => {
+			res.status(500).send({ message: "Error al eliminar el usuario", error });
 		});
 });
 
