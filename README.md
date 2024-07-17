@@ -70,7 +70,7 @@ El proyecto está desplegado en Vercel:
 
 - **Frontend:** [![Deploy](https://img.shields.io/badge/Deploy-Link-green?logo=github)](https://almuerzieasy.vercel.app/)
 
-- **Backend:** [![Deploy](https://img.shields.io/badge/Deploy-Link-green?logo=github)](https://almuerzieasy-backend.vercel.app/api/)
+- **Backend:** [![Deploy](https://img.shields.io/badge/Deploy-Link-green?logo=github)](https://almuerzieasy-backend.vercel.app/)
 
 ## 📚 Aprendizajes
 
