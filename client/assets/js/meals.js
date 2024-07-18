@@ -51,25 +51,25 @@ export const updateCart = () => {
 export const renderItem = (item, index) => {
 	const element = stringToHTML(`
 	<div class="col-lg-3 col-md-6 col-sm-6 col-12">
-		<div class="card meals-container rounded-4 p-2 shadow-lg h-100">
-			<div class="meal-shadow d-flex justify-content-center align-items-center">
-				<img src="${item.image}"
-					class="card-img-top w-75 rounded-4" alt="meal-1">
-			</div>
-			<div class="card-body d-flex flex-column justify-content-between">
-				<h5 class="card-title card-title-meals fw-bold text-center fs-4">${item.name}</h5>
-				<p class="card-text text-secondary fw-medium text-center">${item.desc}</p>
-				<div>
-					<div class="d-flex justify-content-between align-items-center">
-						<p class="fw-bold text-center fs-4 my-auto price-card-order">$${item.price}</p>
-						<button class="add-to-cart-btn" title="Add to Cart" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
-							<i class="bi bi-cart-plus-fill fs-4 text-white"></i>
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="card meals-container rounded-4 p-2 shadow-lg h-100">
+        <div class="meal-shadow d-flex justify-content-center align-items-center">
+            <img src="${item.image}"
+                 class="card-img-top rounded-4 img-responsive" alt="${item.name}">
+        </div>
+        <div class="card-body d-flex flex-column justify-content-between">
+            <h5 class="card-title card-title-meals fw-bold text-center fs-4">${item.name}</h5>
+            <p class="card-text text-secondary fw-medium text-center">${item.desc}</p>
+            <div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="fw-bold text-center fs-3 my-auto price-card-order">$${item.price}</p>
+                    <button class="add-to-cart-btn" title="Add to Cart" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                        <i class="bi bi-cart-plus-fill fs-3 text-white"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 	`);
 
 	const button = element.querySelector(".add-to-cart-btn");

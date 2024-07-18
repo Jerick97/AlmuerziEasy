@@ -84,7 +84,9 @@ export const renderOrderItem = async (order, meals) => {
 		<div class="card order-card mb-2 rounded-4 h-100">
 			<div class="row g-0">
 				<div class="col-md-5 col-5 d-flex justify-content-center align-items-center">
-					<img src="${orderMeals[0].image}" class="img-fluid rounded-start" alt="${
+					<img src="${
+						orderMeals[0].image
+					}" class="img-fluid rounded-start img-fit" alt="${
 		orderMeals[0].name
 	}">
 				</div>

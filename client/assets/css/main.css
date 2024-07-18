@@ -74,17 +74,15 @@ body {
 
 .form-control-search {
 	color: #fff !important;
-	padding-left: 2.5rem;
+	padding-right: 2.5rem;
 }
 
 .form-control-search::placeholder {
 	color: #fff;
 }
 
-.position-relative .bi-search {
-	position: absolute;
-	left: 0.75rem;
-	top: 50%;
+.position-relative button .bi-search {
+	right: 10px;
 	transform: translateY(-50%);
 }
 
@@ -94,7 +92,20 @@ body {
 }
 
 .navbar-hover {
-	background: #0d0d0f;
+	background: #000000;
+}
+
+.navbar-toggler i {
+	transition: color 0.3s ease;
+}
+
+.navbar.scrolled .navbar-toggler i {
+	color: black;
+}
+
+.navbar-open {
+	background: #000000;
+	box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
 }
 
 .dropdown-toggle::after {
@@ -322,6 +333,31 @@ body {
 	filter: drop-shadow(0px 10px 30px rgba(0, 0, 0, 0.2509803922));
 }
 
+.img-responsive {
+	width: 80%;
+}
+
+@media (max-width: 992px) {
+	/* md y abajo */
+	.img-responsive {
+		width: 70%;
+	}
+}
+
+@media (max-width: 768px) {
+	/* sm y abajo */
+	.img-responsive {
+		width: 60%;
+	}
+}
+
+@media (max-width: 576px) {
+	/* xs */
+	.img-responsive {
+		width: 50%;
+	}
+}
+
 .card-title-meals {
 	font-size: 1.5rem;
 	margin-bottom: 0.5rem;
@@ -382,6 +418,12 @@ body {
 .order-card img {
 	height: 150px;
 	object-fit: cover;
+}
+
+.img-fit {
+	width: 100%;
+	height: auto;
+	object-fit: contain !important;
 }
 
 .order-card .card-body {

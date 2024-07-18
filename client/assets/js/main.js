@@ -178,8 +178,9 @@ const renderOrders = async () => {
 	initializeForm();
 	initializeData();
 
-	/* Estilo del navbar cuando se hace scroll */
 	const navbar = document.getElementById("navbar");
+	const navbarToggler = document.querySelector(".navbar-toggler");
+	const navbarCollapse = document.getElementById("navbarTogglerDemo02");
 
 	window.addEventListener("scroll", function () {
 		if (window.scrollY > 50) {
@@ -188,6 +189,33 @@ const renderOrders = async () => {
 			navbar.classList.remove("navbar-hover");
 		}
 	});
+
+	navbarToggler.addEventListener("click", function () {
+		if (!navbarCollapse.classList.contains("show")) {
+			navbar.classList.add("navbar-open");
+		} else {
+			navbar.classList.remove("navbar-open");
+		}
+	});
+
+	navbarCollapse.addEventListener("shown.bs.collapse", function () {
+		if (window.scrollY <= 50) {
+			navbar.classList.add("navbar-open");
+		}
+	});
+
+	navbarCollapse.addEventListener("hidden.bs.collapse", function () {
+		navbar.classList.remove("navbar-open");
+	});
+
+	window.addEventListener("resize", function () {
+		const mdBreakpoint = 768;
+		if (window.innerWidth >= mdBreakpoint) {
+			navbar.classList.remove("navbar-open");
+			navbarCollapse.classList.remove("show");
+		}
+	});
+
 	updateCart();
 };
 
