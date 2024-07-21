@@ -33,7 +33,7 @@ const initializeForm = () => {
 
 		try {
 			const response = await fetch(
-				"https://almuerzieasy-backend.vercel.app/api/orders",
+				"https://almuerzieasy-backend.vercel.app/api/v1/orders",
 				{
 					method: "POST",
 					headers: {
@@ -62,8 +62,6 @@ const initializeForm = () => {
 		} catch (error) {
 			console.error("Error:", error);
 			alert("Ocurrió un error al crear la orden. Inténtelo de nuevo.");
-		} finally {
-			/* submit.classList.add("disabled"); */
 		}
 	};
 };
@@ -79,7 +77,7 @@ const initializeData = () => {
 		submit.setAttribute("disabled", true); // Deshabilitar el botón físicamente
 		document.querySelector(".total-price").textContent = "$5.00";
 	}
-	fetch("https://almuerzieasy-backend.vercel.app/api/meals", {
+	fetch("https://almuerzieasy-backend.vercel.app/api/v1/meals", {
 		method: "GET",
 		mode: "cors",
 		cache: "no-cache",
@@ -97,7 +95,7 @@ const initializeData = () => {
 			renderMeals(mealsState);
 
 			// Fetch orders after fetching meals
-			return fetch("https://almuerzieasy-backend.vercel.app/api/orders");
+			return fetch("https://almuerzieasy-backend.vercel.app/api/v1/orders");
 		})
 		.then((response) => response.json())
 		.then(async (ordersData) => {
@@ -228,7 +226,7 @@ function handleRegister(event) {
 	const email = emailInput.value;
 	const password = passwordInput.value;
 
-	fetch("https://almuerzieasy-backend.vercel.app/api/auth/register", {
+	fetch("https://almuerzieasy-backend.vercel.app/api/v1/auth/register", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -268,7 +266,7 @@ function handleLogin(event) {
 	const email = emailInput.value;
 	const password = passwordInput.value;
 
-	fetch("https://almuerzieasy-backend.vercel.app/api/auth/login", {
+	fetch("https://almuerzieasy-backend.vercel.app/api/v1/auth/login", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -295,7 +293,7 @@ function handleLogin(event) {
 			}
 		})
 		.then((token) => {
-			return fetch("https://almuerzieasy-backend.vercel.app/api/auth/me", {
+			return fetch("https://almuerzieasy-backend.vercel.app/api/v1/auth/me", {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",

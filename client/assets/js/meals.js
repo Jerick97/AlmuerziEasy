@@ -1,5 +1,5 @@
 import { stringToHTML } from "./utils.js";
-import { selectedMeals, updateSelectedMeals } from "./config.js";
+import { delivery, selectedMeals, updateSelectedMeals } from "./config.js";
 
 export const renderMeals = (meals) => {
 	const mealsList = document.getElementById("meals-list");
@@ -18,25 +18,29 @@ export const updateCart = () => {
 	selectedMeals.forEach((meal, index) => {
 		subtotal += meal.price; // Sum the price of each selected meal
 		const cartItem = stringToHTML(`
-			<div class="row g-3 d-flex justify-content-center align-items-center mb-3">
-				<div class="col-3">
-					<img class="img-fluid" src="${meal.image}" alt="${meal.name}">
-				</div>
-				<div class="col-6">
-					<h4 class="fw-semibold text-secondary fs-5">${meal.name}</h4>
-					<p class="fw-semibold">Cantidad: <span class="fw-medium">1</span></p>
-				</div>
-				<div class="col-3">
-					<h4 class="fw-semibold">$${meal.price}</h4>
-				</div>
-				<div class="border-2 border-bottom border-light mb-2 w-100"></div>
+		<div class="row g-2 d-flex justify-content-center align-items-center mb-3 position-relative overflow-hidden">
+			<div class="col-3">
+				<img class="img-fluid" src="${meal.image}" alt="${meal.name}">
 			</div>
-			
+			<div class="col-6">
+				<h4 class="fw-semibold text-secondary fs-5">${meal.name}</h4>
+				<p class="fw-semibold">Cantidad: <span class="fw-medium">1</span></p>
+			</div>
+			<div class="col-3">
+				<h4 class="fw-semibold">$${meal.price}</h4>
+			</div>
+			<i class="bi bi-x position-absolute left-0 bottom-50 p-2 fs-4 remove-item" style="cursor: pointer; z-index: 1; transform: translate(88%, -35%);"></i>
+			<div class="border-2 border-bottom border-light mb-2 w-100"></div>
+		</div>
 		`);
+		const removeButton = cartItem.querySelector(".remove-item");
+		removeButton.addEventListener("click", () => {
+			removeMealFromCart(index);
+		});
+
 		cartItemsContainer.appendChild(cartItem);
 	});
 
-	const delivery = 5;
 	const total = subtotal + delivery;
 	const countElements = document.querySelectorAll(".count");
 	countElements.forEach((element) => {
@@ -48,13 +52,22 @@ export const updateCart = () => {
 	document.querySelector(".total-price").textContent = `$${total.toFixed(2)}`;
 };
 
+// Función para eliminar un producto del carrito
+export const removeMealFromCart = (index) => {
+	selectedMeals.splice(index, 1); // Elimina el producto del array
+	localStorage.setItem("cart", JSON.stringify(selectedMeals)); // Actualiza el almacenamiento local
+	updateSelectedMeals(selectedMeals); // Actualiza el estado global
+	updateCart(); // Actualiza la visualización del carrito
+	checkSubmitButtonState();
+};
+
 export const renderItem = (item, index) => {
 	const element = stringToHTML(`
 	<div class="col-lg-3 col-md-6 col-sm-6 col-12">
     <div class="card meals-container rounded-4 p-2 shadow-lg h-100">
         <div class="meal-shadow d-flex justify-content-center align-items-center">
             <img src="${item.image}"
-                 class="card-img-top rounded-4 img-responsive" alt="${item.name}">
+                class="card-img-top rounded-4 img-responsive" alt="${item.name}">
         </div>
         <div class="card-body d-flex flex-column justify-content-between">
             <h5 class="card-title card-title-meals fw-bold text-center fs-4">${item.name}</h5>
@@ -87,17 +100,22 @@ export const renderItem = (item, index) => {
 			updateSelectedMeals(selectedMeals);
 		}
 		updateCart();
-		if (selectedMeals.length > 0) {
-			submit.classList.remove("disabled");
-			submit.removeAttribute("disabled"); // Habilitar el botón físicamente
-		} else {
-			submit.classList.add("disabled");
-			submit.setAttribute("disabled", true); // Deshabilitar el botón físicamente
-			document.querySelector(".total-price").textContent = "$5.00";
-		}
+		checkSubmitButtonState();
 	});
 
 	return element;
+};
+
+// Verifica si existen Productos Seleccionados
+export const checkSubmitButtonState = () => {
+	if (selectedMeals.length > 0) {
+		submit.classList.remove("disabled");
+		submit.removeAttribute("disabled"); // Habilitar el botón físicamente
+	} else {
+		submit.classList.add("disabled");
+		submit.setAttribute("disabled", true); // Deshabilitar el botón físicamente
+		document.querySelector(".total-price").textContent = `$${delivery}.00`;
+	}
 };
 
 export const renderPlaceholderMeals = () => {

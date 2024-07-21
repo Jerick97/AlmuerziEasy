@@ -1,8 +1,8 @@
 const express = require("express");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const Users = require("../models/Users");
-const { isAuthenticated } = require("../auth");
+const Users = require("../../models/Users");
+const { isAuthenticated } = require("../../auth");
 
 const router = express.Router();
 
@@ -15,22 +15,32 @@ const signToken = (userId) => {
 router.post("/register", (req, res) => {
 	const { email, password } = req.body;
 	crypto.randomBytes(16, (err, salt) => {
+		if (err) {
+			return res.status(500).json({ message: "Internal Server Error" });
+		}
 		const newSalt = salt.toString("base64");
 		crypto.pbkdf2(password, newSalt, 10000, 64, "sha1", (err, key) => {
+			if (err) {
+				return res.status(500).json({ message: "Internal Server Error" });
+			}
 			const encryptedPassword = key.toString("base64");
 			Users.findOne({ email })
 				.exec()
 				.then((user) => {
 					if (user) {
-						return res.json({ message: "usuario ya existe" });
+						return res.status(400).json({ message: "User already exists" });
 					}
 					Users.create({
 						email,
 						password: encryptedPassword,
 						salt: newSalt,
-					}).then(() => {
-						res.status(201).json({ message: "usuario creado con éxito" });
-					});
+					})
+						.then(() => {
+							res.status(201).json({ message: "User created successfully!" });
+						})
+						.catch((err) => {
+							res.status(500).json({ message: "Internal Server Error" });
+						});
 				});
 		});
 	});
@@ -42,9 +52,7 @@ router.post("/login", (req, res) => {
 		.exec()
 		.then((user) => {
 			if (!user) {
-				return res
-					.status(401)
-					.json({ message: "usuario y/o contraseña incorrecta" });
+				return res.status(401).json({ message: "Invalid email or password" });
 			}
 			crypto.pbkdf2(password, user.salt, 10000, 64, "sha1", (err, key) => {
 				const encryptedPassword = key.toString("base64");
@@ -52,16 +60,21 @@ router.post("/login", (req, res) => {
 					const token = signToken(user._id);
 					return res.status(200).json({ token: token });
 				}
-				return res
-					.status(401)
-					.json({ message: "usuario y/o contraseña incorrecta" });
+				return res.status(401).json({ message: "Invalid email or password" });
 			});
+		})
+		.catch((error) => {
+			res.status(500).send({ message: "Internal Server Error" });
 		});
 });
 
 router.get("/me", isAuthenticated, (req, res) => {
-	const { password, salt, ...userWithoutSensitiveInfo } = req.user._doc;
-	res.send(userWithoutSensitiveInfo);
+	try {
+		const { password, salt, ...userWithoutSensitiveInfo } = req.user._doc;
+		res.status(200).json(userWithoutSensitiveInfo);
+	} catch (error) {
+		res.status(500).json({ message: "Internal Server Error" });
+	}
 });
 
 // Ruta para obtener todos los usuarios
@@ -75,7 +88,7 @@ router.get("/users", isAuthenticated, (req, res) => {
 			res.status(200).send(usersWithoutSensitiveInfo);
 		})
 		.catch((error) => {
-			res.status(500).send({ message: "Error al obtener los usuarios" });
+			res.status(500).send({ message: "Error retrieving users" });
 		});
 });
 
@@ -85,12 +98,12 @@ router.delete("/users/:id", isAuthenticated, (req, res) => {
 	Users.findByIdAndDelete(userId)
 		.then((deletedUser) => {
 			if (!deletedUser) {
-				return res.status(404).send({ message: "Usuario no encontrado" });
+				return res.status(404).send({ message: "User not found" });
 			}
-			res.status(200).send({ message: "Usuario eliminado con éxito" });
+			res.status(200).send({ message: "User successfully deleted" });
 		})
 		.catch((error) => {
-			res.status(500).send({ message: "Error al eliminar el usuario", error });
+			res.status(500).send({ message: "Error deleting user", error });
 		});
 });
 

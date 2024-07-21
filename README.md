@@ -15,7 +15,7 @@
   </tr>
   <tr>
     <td colspan="2" style="text-align:center">
-      <img src="https://res.cloudinary.com/djtzqnrmy/image/upload/v1721250520/Readme/AlmuerziEasy/k7yh4igqh30yyqpzlfsq.png" alt="Mobile" style="width:100%" />
+      <img src="https://res.cloudinary.com/djtzqnrmy/image/upload/v1721600550/Readme/AlmuerziEasy/mnwxd9ott9dzm6gqi8xq.png" alt="Mobile" style="width:100%" />
     </td>
   </tr>
 </table>
@@ -34,7 +34,7 @@
 
 <h3>Back-End</h3>
 
-![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
+![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB) ![Swagger Badge](https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=000&style=for-the-badge)
 
 <h3>Base de datos</h3>
 
@@ -64,6 +64,28 @@ El proyecto está organizado como un monorepo con dos principales directorios:
 
 - **Serverless:** Contiene el backend del proyecto, implementado con Node.js, Express.js y MongoDB.
 
+## 📖 Documentación
+
+La documentación del API de **AlmuerziEasy** es completa y proporciona información detallada sobre cómo interactuar con nuestros endpoints. Usamos **Swagger** para generar una interfaz interactiva y fácil de usar para nuestra documentación de la API. Esto le permite explorar y probar la API directamente desde su navegador.
+
+### 📘 Cómo acceder a la documentación
+
+Puede acceder a la documentación en vivo de la API de AlmuerziEasy visitando el siguiente enlace:
+
+[![Swagger Documentation](https://img.shields.io/badge/Swagger-Documentation-blue?logo=swagger)](https://almuerzieasy-backend.vercel.app/api/v1/docs/)
+
+### 📑 Características de la documentación
+
+- **Interfaz interactiva:** Pruebe los puntos finales de la API directamente desde la documentación.
+- **Descripciones detalladas:** Cada punto final incluye una descripción detallada de su propósito, parámetros y respuestas esperadas.
+- **Solicitudes y respuestas de ejemplo:** Consulte solicitudes y respuestas de ejemplo para comprender el formato esperado.
+- **Información de autenticación:** Conozca los métodos de autenticación utilizados en la API.
+- **Manejo de errores:** Comprenda las posibles respuestas de error y cómo manejarlas.
+
+### 📮 Comentarios y soporte
+
+Si tiene algún problema o tiene comentarios sobre la API o su documentación, comuníquese con nuestro equipo de soporte en [emersonsuarez2904@gmail.com](mailto:emersonsuarez2904@gmail.com).
+
 ## 🌐 Despliegue
 
 El proyecto está desplegado en Vercel:
@@ -89,3 +111,5 @@ Las contribuciones son bienvenidas. Si tienes alguna sugerencia o mejora, por fa
 ## 📱 Notificación de Cambios
 
 Aunque no es requerido por la licencia, si realizas modificaciones o mejoras a este proyecto, agradecería que me notifiques enviando un correo a [emersonsuarez2904@gmail.com](mailto:emersonsuarez2904@gmail.com) o abriendo un issue en el repositorio del proyecto.
+
+¡Gracias por utilizar **AlmuerziEasy**! Estamos comprometidos a brindarle la mejor experiencia posible.

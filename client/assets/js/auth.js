@@ -1,7 +1,7 @@
 export async function fetchUsers() {
 	const token = localStorage.getItem("authToken");
 	const response = await fetch(
-		"https://almuerzieasy-backend.vercel.app/api/auth/users",
+		"https://almuerzieasy-backend.vercel.app/api/v1/auth/users",
 		{
 			headers: {
 				authorization: token,

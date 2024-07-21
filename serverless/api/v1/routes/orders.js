@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const express = require("express");
-const Orders = require("../models/Orders");
-const Meals = require("../models/Meals");
-const { isAuthenticated, hasRoles } = require("../auth");
+const Orders = require("../../models/Orders");
+const Meals = require("../../models/Meals");
+const { isAuthenticated, hasRoles } = require("../../auth");
 
 const router = express.Router();
 

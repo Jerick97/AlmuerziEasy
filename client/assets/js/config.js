@@ -2,6 +2,7 @@ export let user = JSON.parse(localStorage.getItem("user")) ?? {};
 export let mealsState = [];
 export let ruta = "login"; //login, register, orders
 export let selectedMeals = JSON.parse(localStorage.getItem("cart")) ?? [];
+export const delivery = 5;
 
 export const updateUser = (newUser) => {
 	user = newUser;
