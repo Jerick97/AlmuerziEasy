@@ -7,6 +7,14 @@ const {
 	getAllUsers,
 	deleteUserById,
 } = require("./docs/users");
+const {
+	getAllMeals,
+	Meal,
+	getMealById,
+	createMeals,
+	updateMealById,
+	deleteMealById,
+} = require("./docs/meals");
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const CSS_URL =
@@ -65,6 +73,7 @@ const swaggerOptions = {
 			schemas: {
 				CreateUserBody,
 				LoginUserBody,
+				Meal,
 			},
 		},
 		paths: {
@@ -82,6 +91,12 @@ const swaggerOptions = {
 			},
 			"/users/{id}": {
 				delete: deleteUserById,
+			},
+			"/meals": { get: getAllMeals, post: createMeals },
+			"/meals/{id}": {
+				get: getMealById,
+				put: updateMealById,
+				delete: deleteMealById,
 			},
 		},
 	},
