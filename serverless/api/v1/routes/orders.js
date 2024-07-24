@@ -7,16 +7,33 @@ const { isAuthenticated, hasRoles } = require("../../auth");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-	// Devuelve todos las ordenes
+	// Devuelve todas las órdenes
 	Orders.find()
 		.exec()
-		.then((order) => res.status(200).send(order));
+		.then((orders) => res.status(200).json(orders))
+		.catch((error) => {
+			// Manejo de errores
+			res
+				.status(500)
+				.json({ message: "Error retrieving orders", error: error });
+		});
 });
 
 router.get("/:id", (req, res) => {
 	Orders.findById(req.params.id)
 		.exec()
-		.then((order) => res.status(200).send(order));
+		.then((order) => {
+			if (!order) {
+				// Si no se encuentra la orden con el ID proporcionado
+				return res.status(404).json({ message: "Order not found" });
+			}
+			// Si se encuentra la orden, devolverla con estado 200
+			res.status(200).json(order);
+		})
+		.catch((error) => {
+			// Manejo de errores
+			res.status(500).json({ message: "Error retrieving order", error: error });
+		});
 });
 
 router.post("/", isAuthenticated, async (req, res) => {
@@ -26,7 +43,7 @@ router.post("/", isAuthenticated, async (req, res) => {
 	if (!Array.isArray(orders) || orders.length === 0) {
 		return res
 			.status(400)
-			.send({ message: "orders debe ser un array que no esté vacío" });
+			.send({ message: "Orders must be an array that is not empty" });
 	}
 
 	try {
@@ -46,7 +63,7 @@ router.post("/", isAuthenticated, async (req, res) => {
 					session.endSession();
 					return res
 						.status(400)
-						.send({ message: `Meal ${meal.name} está agotado` });
+						.send({ message: `Meal ${meal.name} Is it sold out` });
 				}
 				meal.quantity -= order.quantity;
 				await meal.save({ session });
@@ -62,23 +79,58 @@ router.post("/", isAuthenticated, async (req, res) => {
 
 		res.status(201).send(createdOrders); // Devuelve las órdenes creadas
 	} catch (err) {
-		console.error("Error creando orden:", err);
+		console.error("Error creating order:", err);
 		res
 			.status(500)
-			.send({ message: "Error creando orden", details: err.message });
+			.send({ message: "Error creating order", details: err.message });
 	}
 });
 
-router.put("/:id", isAuthenticated, hasRoles(["user", "admin"]), (req, res) => {
-	Orders.findByIdAndUpdate(req.params.id, req.body).then(() =>
-		res.sendStatus(204)
-	);
-});
+router.put(
+	"/:id",
+	isAuthenticated,
+	hasRoles(["user", "admin"]),
+	async (req, res) => {
+		try {
+			// Actualiza la orden por ID
+			const updatedOrder = await Orders.findByIdAndUpdate(
+				req.params.id,
+				req.body,
+				{ new: true }
+			).exec();
 
-router.delete("/:id", isAuthenticated, (req, res) => {
-	Orders.findOneAndDelete(req.params.id)
-		.exec()
-		.then(() => res.sendStatus(204));
+			if (!updatedOrder) {
+				// Si no se encuentra la orden con el ID proporcionado
+				return res.status(404).json({ message: "Order not found" });
+			}
+
+			// Si la orden se actualiza con éxito
+			res.status(200).json(updatedOrder);
+		} catch (error) {
+			// Manejo de errores
+			console.error("Error updating order:", error);
+			res.status(500).json({ message: "Error updating order", error: error });
+		}
+	}
+);
+
+router.delete("/:id", isAuthenticated, async (req, res) => {
+	try {
+		// Busca y elimina la orden por ID
+		const deletedOrder = await Orders.findByIdAndDelete(req.params.id).exec();
+
+		if (!deletedOrder) {
+			// Si no se encuentra la orden con el ID proporcionado
+			return res.status(404).json({ message: "Order not found" });
+		}
+
+		// Si la orden se elimina con éxito
+		res.sendStatus(204);
+	} catch (error) {
+		// Manejo de errores
+		console.error("Error deleting order:", error);
+		res.status(500).json({ message: "Error deleting order", error: error });
+	}
 });
 
 module.exports = router;
