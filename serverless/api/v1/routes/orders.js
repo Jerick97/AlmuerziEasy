@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
 			// Manejo de errores
 			res
 				.status(500)
-				.json({ message: "Error retrieving orders", error: error });
+				.json({ message: "Error retrieving orders", error: error.message });
 		});
 });
 
@@ -32,7 +32,9 @@ router.get("/:id", (req, res) => {
 		})
 		.catch((error) => {
 			// Manejo de errores
-			res.status(500).json({ message: "Error retrieving order", error: error });
+			res
+				.status(500)
+				.json({ message: "Error retrieving order", error: error.message });
 		});
 });
 
@@ -78,41 +80,37 @@ router.post("/", isAuthenticated, async (req, res) => {
 		session.endSession();
 
 		res.status(201).send(createdOrders); // Devuelve las órdenes creadas
-	} catch (err) {
-		console.error("Error creating order:", err);
+	} catch (error) {
 		res
 			.status(500)
-			.send({ message: "Error creating order", details: err.message });
+			.send({ message: "Error creating order", details: error.message });
 	}
 });
 
-router.put(
-	"/:id",
-	isAuthenticated,
-	hasRoles(["user", "admin"]),
-	async (req, res) => {
-		try {
-			// Actualiza la orden por ID
-			const updatedOrder = await Orders.findByIdAndUpdate(
-				req.params.id,
-				req.body,
-				{ new: true }
-			).exec();
+router.put("/:id", isAuthenticated, hasRoles(["admin"]), async (req, res) => {
+	try {
+		// Actualiza la orden por ID
+		const updatedOrder = await Orders.findByIdAndUpdate(
+			req.params.id,
+			req.body,
+			{ new: true }
+		).exec();
 
-			if (!updatedOrder) {
-				// Si no se encuentra la orden con el ID proporcionado
-				return res.status(404).json({ message: "Order not found" });
-			}
-
-			// Si la orden se actualiza con éxito
-			res.status(200).json(updatedOrder);
-		} catch (error) {
-			// Manejo de errores
-			console.error("Error updating order:", error);
-			res.status(500).json({ message: "Error updating order", error: error });
+		if (!updatedOrder) {
+			// Si no se encuentra la orden con el ID proporcionado
+			return res.status(404).json({ message: "Order not found" });
 		}
+
+		// Si la orden se actualiza con éxito
+		res.status(200).json(updatedOrder);
+	} catch (error) {
+		// Manejo de errores
+		console.error("Error updating order:", error);
+		res
+			.status(500)
+			.json({ message: "Error updating order", error: error.message });
 	}
-);
+});
 
 router.delete("/:id", isAuthenticated, async (req, res) => {
 	try {
@@ -128,8 +126,9 @@ router.delete("/:id", isAuthenticated, async (req, res) => {
 		res.sendStatus(204);
 	} catch (error) {
 		// Manejo de errores
-		console.error("Error deleting order:", error);
-		res.status(500).json({ message: "Error deleting order", error: error });
+		res
+			.status(500)
+			.json({ message: "Error deleting order", error: error.message });
 	}
 });
 

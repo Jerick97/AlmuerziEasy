@@ -72,6 +72,10 @@ const createUser = {
 const CreateUserBody = {
 	type: "object",
 	properties: {
+		name: {
+			type: "string",
+			example: "jhon snow",
+		},
 		email: {
 			type: "string",
 			example: "john.snow@email.com",

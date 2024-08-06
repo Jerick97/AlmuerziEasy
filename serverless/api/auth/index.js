@@ -8,7 +8,7 @@ const isAuthenticated = (req, res, next) => {
 	if (!token) {
 		return res.status(401).send("No token provided");
 	}
-	jwt.verify(token, "mi-secreto", (err, decoded) => {
+	jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
 		const { _id } = decoded;
 		Users.findOne({ _id })
 			.exec()

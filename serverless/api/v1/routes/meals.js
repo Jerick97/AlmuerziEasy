@@ -26,7 +26,9 @@ router.get("/:id", (req, res) => {
 		})
 		.catch((error) => {
 			// Manejo de errores
-			res.status(500).json({ message: "Error getting Meal", error });
+			res
+				.status(500)
+				.json({ message: "Error getting Meal", error: error.message });
 		});
 });
 
@@ -37,10 +39,14 @@ router.post("/", (req, res) => {
 			// Manejo de errores si ocurre un problema al crear el plato
 			if (error.name === "ValidationError") {
 				// Si el error es de validación, respondemos con un estado 400
-				res.status(400).json({ message: "Invalid input data", error });
+				res
+					.status(400)
+					.json({ message: "Invalid input data", error: error.message });
 			} else {
 				// Para otros errores, respondemos con un estado 500
-				res.status(500).json({ message: "Error creating Meal", error });
+				res
+					.status(500)
+					.json({ message: "Error creating Meal", error: error.message });
 			}
 		});
 });
@@ -62,10 +68,14 @@ router.put("/:id", (req, res) => {
 			// Manejo de errores
 			if (error.name === "ValidationError") {
 				// Si el error es de validación, respondemos con un estado 400
-				res.status(400).json({ message: "Invalid input data", error });
+				res
+					.status(400)
+					.json({ message: "Invalid input data", error: error.message });
 			} else {
 				// Para otros errores, respondemos con un estado 500
-				res.status(500).json({ message: "Error updating Meal", error });
+				res
+					.status(500)
+					.json({ message: "Error updating Meal", error: error.message });
 			}
 		});
 });
@@ -83,7 +93,9 @@ router.delete("/:id", (req, res) => {
 		})
 		.catch((error) => {
 			// Manejo de errores
-			res.status(500).json({ message: "Error deleting Meal", error });
+			res
+				.status(500)
+				.json({ message: "Error deleting Meal", error: error.message });
 		});
 });
 

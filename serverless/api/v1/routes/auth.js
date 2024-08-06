@@ -7,13 +7,13 @@ const { isAuthenticated } = require("../../auth");
 const router = express.Router();
 
 const signToken = (userId) => {
-	return jwt.sign({ _id: userId }, "mi-secreto", {
+	return jwt.sign({ _id: userId }, process.env.JWT_SECRET, {
 		expiresIn: 60 * 60 * 24 * 365, // 1 año
 	});
 };
 
 router.post("/register", (req, res) => {
-	const { email, password } = req.body;
+	const { email, password, name } = req.body;
 	crypto.randomBytes(16, (err, salt) => {
 		if (err) {
 			return res.status(500).json({ message: "Internal Server Error" });
@@ -31,6 +31,7 @@ router.post("/register", (req, res) => {
 						return res.status(400).json({ message: "User already exists" });
 					}
 					Users.create({
+						name,
 						email,
 						password: encryptedPassword,
 						salt: newSalt,
@@ -103,7 +104,9 @@ router.delete("/users/:id", isAuthenticated, (req, res) => {
 			res.status(200).send({ message: "User successfully deleted" });
 		})
 		.catch((error) => {
-			res.status(500).send({ message: "Error deleting user", error });
+			res
+				.status(500)
+				.send({ message: "Error deleting user", error: error.message });
 		});
 });
 
