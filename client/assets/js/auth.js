@@ -17,12 +17,12 @@ export async function transformOrder(order) {
 	const userMap = {};
 
 	users.forEach((user) => {
-		userMap[user._id] = user.email.split("@")[0];
+		userMap[user._id] = user.name;
 	});
 
-	const emailLocalPart = userMap[order.user_id];
+	const userName = userMap[order.user_id];
 	return {
 		...order,
-		user_id: emailLocalPart,
+		user_name: userName,
 	};
 }

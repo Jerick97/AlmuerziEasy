@@ -24,7 +24,7 @@ export const updateCart = () => {
 			</div>
 			<div class="col-6">
 				<h4 class="fw-semibold text-secondary fs-5">${meal.name}</h4>
-				<p class="fw-semibold">Cantidad: <span class="fw-medium">1</span></p>
+				<p class="fw-semibold">Cantidad: <span class="fw-medium">${meal.quantity}</span></p>
 			</div>
 			<div class="col-3">
 				<h4 class="fw-semibold">$${meal.price}</h4>
@@ -90,15 +90,18 @@ export const renderItem = (item, index) => {
 		const existingMealIndex = selectedMeals.findIndex(
 			(meal) => meal._id === item._id
 		);
+
 		if (existingMealIndex !== -1) {
-			selectedMeals.splice(existingMealIndex, 1); // Remove if already exists
-			localStorage.setItem("cart", JSON.stringify(selectedMeals));
-			updateSelectedMeals(selectedMeals);
+			// Increment the quantity if the item already exists in the cart
+			selectedMeals[existingMealIndex].quantity =
+				(selectedMeals[existingMealIndex].quantity || 0) + 1;
 		} else {
-			selectedMeals.push(item); // Add new meal
-			localStorage.setItem("cart", JSON.stringify(selectedMeals));
-			updateSelectedMeals(selectedMeals);
+			// Add new meal with quantity set to 1
+			selectedMeals.push({ ...item, quantity: 1 });
 		}
+
+		localStorage.setItem("cart", JSON.stringify(selectedMeals));
+		updateSelectedMeals(selectedMeals);
 		updateCart();
 		checkSubmitButtonState();
 	});

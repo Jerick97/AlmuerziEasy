@@ -35,7 +35,23 @@ const createUser = {
 			},
 		},
 		400: {
-			description: "User already exists",
+			description: "Bad Request - Validation Error",
+			content: {
+				"application/json": {
+					schema: {
+						type: "object",
+						properties: {
+							message: {
+								type: "string",
+								example: "Validation error: name must be at least 3 characters",
+							},
+						},
+					},
+				},
+			},
+		},
+		409: {
+			description: "Conflict - User already exists",
 			content: {
 				"application/json": {
 					schema: {
@@ -90,7 +106,7 @@ const CreateUserBody = {
 			example: "user",
 		},
 	},
-	required: ["email", "password"],
+	required: ["name", "email", "password"],
 };
 
 const loginUser = {

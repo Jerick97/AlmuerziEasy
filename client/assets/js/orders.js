@@ -46,6 +46,9 @@ export function timeAgo(date) {
 	const now = new Date();
 	const secondsPast = (now.getTime() - date.getTime()) / 1000;
 
+	if (secondsPast < 1) {
+		return "Just now";
+	}
 	if (secondsPast < 60) {
 		return `${Math.floor(secondsPast)} seconds ago`;
 	}
@@ -93,7 +96,9 @@ export const renderOrderItem = async (order, meals) => {
 				<div class="col-md-7 col-7">
 					<div class="card-body text-start">
 						<h4 class="card-title fs-5 fw-bold text-black mb-2">${orderMeals[0].name}</h4>
-						<h5 class="card-text fw-semibold text-primario fs-6">${orderByUser.user_id}</h5>
+						<h5 class="card-text fw-semibold text-primario fs-6">${
+							orderByUser.user_name
+						}</h5>
 						<p class="card-text fw-bold fs-5 text-black">$${orderMeals[0].price.toFixed(
 							2
 						)}</p>

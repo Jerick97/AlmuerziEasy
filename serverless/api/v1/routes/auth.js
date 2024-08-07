@@ -14,6 +14,7 @@ const signToken = (userId) => {
 
 router.post("/register", (req, res) => {
 	const { email, password, name } = req.body;
+
 	crypto.randomBytes(16, (err, salt) => {
 		if (err) {
 			return res.status(500).json({ message: "Internal Server Error" });
@@ -24,22 +25,34 @@ router.post("/register", (req, res) => {
 				return res.status(500).json({ message: "Internal Server Error" });
 			}
 			const encryptedPassword = key.toString("base64");
+
 			Users.findOne({ email })
 				.exec()
 				.then((user) => {
 					if (user) {
-						return res.status(400).json({ message: "User already exists" });
+						return res.status(409).json({ message: "User already exists" });
 					}
-					Users.create({
+
+					// Crear nuevo usuario
+					const newUser = new Users({
 						name,
 						email,
 						password: encryptedPassword,
 						salt: newSalt,
-					})
+					});
+
+					newUser
+						.save()
 						.then(() => {
 							res.status(201).json({ message: "User created successfully!" });
 						})
 						.catch((err) => {
+							// Manejo de errores de validación de Mongoose
+							if (err.name === "ValidationError") {
+								return res
+									.status(400)
+									.json({ message: "name must be at least 3 characters" });
+							}
 							res.status(500).json({ message: "Internal Server Error" });
 						});
 				});

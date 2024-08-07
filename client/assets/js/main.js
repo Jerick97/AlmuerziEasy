@@ -28,7 +28,7 @@ const initializeForm = () => {
 		const orders = selectedMeals.map((meal) => ({
 			meal_id: [meal._id],
 			user_id: user._id,
-			quantity: 1,
+			quantity: meal.quantity,
 		}));
 
 		try {
@@ -51,17 +51,37 @@ const initializeForm = () => {
 					renderOrder(respuesta, mealsState);
 					updateSelectedMeals([]);
 					updateCart();
-					alert("Se realizo la Orden con éxito");
+					Toastify({
+						text: "Se realizo la Orden con éxito",
+						style: {
+							background: "linear-gradient(to right, #00b09b, #96c93d)",
+						},
+					}).showToast();
 				} else {
 					console.error("Respuesta no es un array:", respuesta);
-					alert("Ocurrió un error inesperado.");
+					Toastify({
+						text: "Ocurrió un error inesperado.",
+						style: {
+							background: "linear-gradient(to right, #ff5f6d, #ffc371)",
+						},
+					}).showToast();
 				}
 			} else {
-				alert(respuesta.message || "Ocurrió un error al crear la orden");
+				Toastify({
+					text: `${respuesta.message}`,
+					style: {
+						background: "linear-gradient(to right, #ff5f6d, #ffc371)",
+					},
+				}).showToast();
 			}
 		} catch (error) {
 			console.error("Error:", error);
-			alert("Ocurrió un error al crear la orden. Inténtelo de nuevo.");
+			Toastify({
+				text: "Ocurrió un error al crear la orden. Inténtelo de nuevo.",
+				style: {
+					background: "linear-gradient(to right, #ff5f6d, #ffc371)",
+				},
+			}).showToast();
 		}
 	};
 };
@@ -217,44 +237,58 @@ const renderOrders = async () => {
 	updateCart();
 };
 
-// Función para manejar el registro
 function handleRegister(event) {
 	event.preventDefault();
 
 	const emailInput = document.getElementById("email");
 	const passwordInput = document.getElementById("password");
+	const nameInput = document.getElementById("name");
 	const email = emailInput.value;
 	const password = passwordInput.value;
+	const name = nameInput.value;
 
 	fetch("https://almuerzieasy-backend.vercel.app/api/v1/auth/register", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ email, password }),
+		body: JSON.stringify({ email, password, name }),
 	})
 		.then((response) => {
 			if (!response.ok) {
-				// Si la respuesta no es ok, lanzar un error
+				// Si la respuesta no es ok, lanzar un error con el mensaje de la respuesta
 				return response.json().then((data) => {
-					throw new Error(data);
+					throw new Error(data.message || "An error occurred");
 				});
 			}
 			// Devolver el JSON de la respuesta
 			return response.json();
 		})
 		.then((data) => {
-			alert(data.message); // Mostrar el mensaje del servidor
-			showTemplate("login"); //Mostramos el Template del Login
+			// Mostrar el mensaje del servidor
+			Toastify({
+				text: `${data.message}`,
+				style: {
+					background: "linear-gradient(to right, #00b09b, #96c93d)",
+				},
+			}).showToast();
+			showTemplate("login"); // Mostramos el Template del Login
 		})
 		.catch((error) => {
-			alert(error.message);
+			// Mostrar el mensaje de error
+			Toastify({
+				text: `${error.message}`,
+				style: {
+					background: "linear-gradient(to right, #ff5f6d, #ffc371)",
+				},
+			}).showToast();
 			console.error("Error:", error);
 		});
 
 	// Limpiar los campos del formulario
 	emailInput.value = "";
 	passwordInput.value = "";
+	nameInput.value = "";
 }
 
 // Función para manejar el login
@@ -277,7 +311,7 @@ function handleLogin(event) {
 			if (!response.ok) {
 				// Si la respuesta no es ok, intentar analizar el JSON de error
 				return response.json().then((data) => {
-					throw new Error(data.message);
+					throw new Error(data.message || "An error occurred");
 				});
 			}
 			// Devolver el JSON de la respuesta
@@ -289,7 +323,12 @@ function handleLogin(event) {
 				updateRoute("orders");
 				return data.token;
 			} else {
-				alert(data.message || "Error en el inicio de sesión");
+				Toastify({
+					text: `${data.message}`,
+					style: {
+						background: "linear-gradient(to right, #ff5f6d, #ffc371)",
+					},
+				}).showToast();
 			}
 		})
 		.then((token) => {
@@ -308,7 +347,12 @@ function handleLogin(event) {
 			renderOrders();
 		})
 		.catch((error) => {
-			alert(error.message);
+			Toastify({
+				text: `${error.message}`,
+				style: {
+					background: "linear-gradient(to right, #ff5f6d, #ffc371)",
+				},
+			}).showToast();
 			console.error("Error:", error);
 		});
 
