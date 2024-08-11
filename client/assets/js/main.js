@@ -169,6 +169,12 @@ function attachFormEventListeners(templateName) {
 			form.id = "login-form";
 			form.addEventListener("submit", handleLogin);
 			break;
+		case "forgot-password":
+			form.id = "forgot-password-form";
+			form.addEventListener("submit", handleForgotPassword);
+		case "reset-password":
+			form.id = "reset-password-form";
+			form.addEventListener("submit", handleResetPassword);
 		default:
 			console.warn("Unknown template:", templateName);
 			break;
@@ -236,6 +242,16 @@ const renderOrders = async () => {
 
 	updateCart();
 };
+
+function handleForgotPassword(event) {
+	event.preventDefault();
+	console.log("Send Email");
+}
+
+function handleResetPassword(event) {
+	event.preventDefault();
+	console.log("Send Email");
+}
 
 function handleRegister(event) {
 	event.preventDefault();
