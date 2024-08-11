@@ -3,7 +3,10 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const Users = require("../../models/Users");
 const { isAuthenticated } = require("../../auth");
-
+const {
+	requestPasswordReset,
+	resetPassword,
+} = require("../../controllers/auth.controller");
 const router = express.Router();
 
 const signToken = (userId) => {
@@ -122,5 +125,11 @@ router.delete("/users/:id", isAuthenticated, (req, res) => {
 				.send({ message: "Error deleting user", error: error.message });
 		});
 });
+
+// Route to request password reset
+router.post("/forgot-password", requestPasswordReset);
+
+// Route to reset password
+router.post("/reset-password/:id/:token", resetPassword);
 
 module.exports = router;
