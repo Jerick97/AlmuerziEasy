@@ -17,7 +17,7 @@ export const requestPasswordReset = async (req, res, next) => {
 			expiresIn: "2h",
 		});
 
-		const resetURL = `https://almuerzieasy.vercel.app/resetpassword?id=${user._id}&token=${token}`;
+		const resetURL = `https://almuerzieasy.vercel.app/?resetpassword&id=${user._id}&token=${token}`;
 
 		// Read the HTML template and image file
 		const htmlTemplatePath = path.join(

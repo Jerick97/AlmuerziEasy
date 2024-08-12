@@ -128,29 +128,38 @@ const initializeData = () => {
 		});
 };
 
+// Función auxiliar para cargar y mostrar templates
+async function loadAndShowTemplate(templateName) {
+	try {
+		const response = await fetch(`templates/${templateName}.html`);
+		const templateText = await response.text();
+		const tempElement = document.createElement("div");
+		tempElement.innerHTML = templateText;
+		const template = tempElement.querySelector("template");
+		if (template) {
+			const app = document.getElementById("app");
+			app.innerHTML = "";
+			app.appendChild(template.content.cloneNode(true));
+			// Agregar el evento de envío del formulario si es necesario
+			attachFormEventListeners(templateName);
+		} else {
+			console.error("No template found in the file:", templateName);
+		}
+	} catch (error) {
+		console.error("Error loading template:", error);
+	}
+}
+
 // Función para mostrar un template y ocultar los demás
 async function showTemplate(templateName) {
 	const token = localStorage.getItem("authToken");
-
-	if (!token) {
-		try {
-			const response = await fetch(`templates/${templateName}.html`);
-			const templateText = await response.text();
-			const tempElement = document.createElement("div");
-			tempElement.innerHTML = templateText;
-			const template = tempElement.querySelector("template");
-			if (template) {
-				const app = document.getElementById("app");
-				app.innerHTML = "";
-				app.appendChild(template.content.cloneNode(true));
-				// Si es el formulario de registro, agregar el evento de envío
-				attachFormEventListeners(templateName);
-			} else {
-				console.error("No template found in the file:", templateName);
-			}
-		} catch (error) {
-			console.error("Error loading template:", error);
-		}
+	const queryParams = getQueryParams();
+	if (queryParams.id && queryParams.token && !token) {
+		// Si la URL tiene id y token, mostramos el template de resetpassword
+		await loadAndShowTemplate("reset-password");
+	} else if (!token) {
+		// Si no hay token y no es el template de resetpassword, mostramos el login o el template predeterminado
+		await loadAndShowTemplate(templateName);
 	} else {
 		return renderOrders();
 	}
@@ -172,9 +181,11 @@ function attachFormEventListeners(templateName) {
 		case "forgot-password":
 			form.id = "forgot-password-form";
 			form.addEventListener("submit", handleForgotPassword);
+			break;
 		case "reset-password":
 			form.id = "reset-password-form";
 			form.addEventListener("submit", handleResetPassword);
+			break;
 		default:
 			console.warn("Unknown template:", templateName);
 			break;
@@ -245,12 +256,109 @@ const renderOrders = async () => {
 
 function handleForgotPassword(event) {
 	event.preventDefault();
-	console.log("Send Email");
+	const data = new FormData(event.target);
+	const dataObject = Object.fromEntries(data.entries());
+	fetch("https://almuerzieasy-backend.vercel.app/api/v1/auth/forgot-password", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(dataObject),
+	})
+		.then((response) => {
+			if (!response.ok) {
+				// Si la respuesta no es ok, lanzar un error con el mensaje de la respuesta
+				return response.json().then((data) => {
+					throw new Error(data.message || "An error occurred");
+				});
+			}
+			// Devolver el JSON de la respuesta
+			return response.json();
+		})
+		.then((data) => {
+			// Mostrar el mensaje del servidor
+			Toastify({
+				text: `${data.message}`,
+				style: {
+					background: "linear-gradient(to right, #00b09b, #96c93d)",
+				},
+			}).showToast();
+			showTemplate("login"); // Mostramos el Template del Login
+		})
+		.catch((error) => {
+			// Mostrar el mensaje de error
+			Toastify({
+				text: `${error.message}`,
+				style: {
+					background: "linear-gradient(to right, #ff5f6d, #ffc371)",
+				},
+			}).showToast();
+			console.error("Error:", error);
+		});
 }
 
 function handleResetPassword(event) {
 	event.preventDefault();
-	console.log("Send Email");
+
+	// Obtener parámetros de consulta
+	const queryParams = getQueryParams();
+	const { id, token } = queryParams;
+
+	// Obtener los datos del formulario
+	const data = new FormData(event.target);
+	const dataObject = Object.fromEntries(data.entries());
+
+	// Validar que las contraseñas coincidan
+	if (dataObject.password !== dataObject["password-confirm"]) {
+		Toastify({
+			text: "Passwords do not match.",
+			style: {
+				background: "linear-gradient(to right, #ff5f6d, #ffc371)",
+			},
+		}).showToast();
+		return;
+	}
+
+	// Construir la URL con los parámetros id y token
+	const url = `https://almuerzieasy-backend.vercel.app/api/v1/auth/reset-password/${id}/${token}`;
+
+	fetch(url, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ password: dataObject.password }), // Solo enviar la nueva contraseña
+	})
+		.then((response) => {
+			if (!response.ok) {
+				// Si la respuesta no es ok, lanzar un error con el mensaje de la respuesta
+				return response.json().then((data) => {
+					throw new Error(data.message || "An error occurred");
+				});
+			}
+			// Devolver el JSON de la respuesta
+			return response.json();
+		})
+		.then((data) => {
+			// Mostrar el mensaje del servidor
+			Toastify({
+				text: `${data.message}`,
+				style: {
+					background: "linear-gradient(to right, #00b09b, #96c93d)",
+				},
+			}).showToast();
+			window.location.replace("https://almuerzieasy.vercel.app");
+		})
+		.catch((error) => {
+			// Mostrar el mensaje de error
+			Toastify({
+				text: `${error.message}`,
+				style: {
+					background: "linear-gradient(to right, #ff5f6d, #ffc371)",
+				},
+			}).showToast();
+			console.error("Error:", error);
+		});
 }
 
 function handleRegister(event) {
@@ -382,6 +490,16 @@ function logout() {
 	localStorage.removeItem("user");
 	localStorage.removeItem("cart");
 	showTemplate("login");
+}
+
+//Función para obtener los parámetros de la URL
+
+function getQueryParams() {
+	const params = new URLSearchParams(window.location.search);
+	return {
+		id: params.get("id"),
+		token: params.get("token"),
+	};
 }
 
 window.onload = () => {
