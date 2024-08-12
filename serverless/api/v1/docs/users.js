@@ -393,6 +393,180 @@ const deleteUserById = {
 	},
 };
 
+const requestPasswordReset = {
+	tags: ["Users"],
+	description: "Send a password reset link to the user's email",
+	operationId: "requestPasswordReset",
+	requestBody: {
+		content: {
+			"application/json": {
+				schema: {
+					$ref: "#/components/schemas/RequestPasswordResetBody",
+				},
+			},
+		},
+		required: true,
+	},
+	responses: {
+		200: {
+			description: "Password reset link sent successfully",
+			content: {
+				"application/json": {
+					schema: {
+						type: "object",
+						properties: {
+							message: {
+								type: "string",
+								example: "Password reset link sent",
+							},
+						},
+					},
+				},
+			},
+		},
+		404: {
+			description: "User not found",
+			content: {
+				"application/json": {
+					schema: {
+						type: "object",
+						properties: {
+							message: {
+								type: "string",
+								example: "User doesn't exist",
+							},
+						},
+					},
+				},
+			},
+		},
+		500: {
+			description: "Internal Server Error",
+			content: {
+				"application/json": {
+					schema: {
+						type: "object",
+						properties: {
+							message: {
+								type: "string",
+								example: "Internal Server Error",
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+};
+
+const RequestPasswordResetBody = {
+	type: "object",
+	properties: {
+		email: {
+			type: "string",
+			example: "user@example.com",
+		},
+	},
+	required: ["email"],
+};
+
+const resetPassword = {
+	tags: ["Users"],
+	description: "Reset the user's password using the provided ID and token",
+	operationId: "resetPassword",
+	parameters: [
+		{
+			name: "id",
+			in: "path",
+			required: true,
+			schema: {
+				type: "string",
+				example: "60b8d295d4e8d2e7a35d99c4",
+			},
+		},
+		{
+			name: "token",
+			in: "path",
+			required: true,
+			schema: {
+				type: "string",
+				example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+			},
+		},
+	],
+	requestBody: {
+		content: {
+			"application/json": {
+				schema: {
+					$ref: "#/components/schemas/ResetPasswordBody",
+				},
+			},
+		},
+		required: true,
+	},
+	responses: {
+		200: {
+			description: "Password reset successfully",
+			content: {
+				"application/json": {
+					schema: {
+						type: "object",
+						properties: {
+							message: {
+								type: "string",
+								example: "Password has been reset successfully",
+							},
+						},
+					},
+				},
+			},
+		},
+		400: {
+			description: "User does not exist or invalid token",
+			content: {
+				"application/json": {
+					schema: {
+						type: "object",
+						properties: {
+							message: {
+								type: "string",
+								example: "User does not exist",
+							},
+						},
+					},
+				},
+			},
+		},
+		500: {
+			description: "Internal Server Error",
+			content: {
+				"application/json": {
+					schema: {
+						type: "object",
+						properties: {
+							message: {
+								type: "string",
+								example: "Internal Server Error",
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+};
+
+const ResetPasswordBody = {
+	type: "object",
+	properties: {
+		password: {
+			type: "string",
+			example: "newStrongPassword123!",
+		},
+	},
+	required: ["password"],
+};
+
 module.exports = {
 	createUser,
 	CreateUserBody,
@@ -401,4 +575,8 @@ module.exports = {
 	getMe,
 	getAllUsers,
 	deleteUserById,
+	requestPasswordReset,
+	RequestPasswordResetBody,
+	resetPassword,
+	ResetPasswordBody,
 };

@@ -6,6 +6,10 @@ const {
 	getMe,
 	getAllUsers,
 	deleteUserById,
+	requestPasswordReset,
+	RequestPasswordResetBody,
+	resetPassword,
+	ResetPasswordBody,
 } = require("./docs/users");
 const {
 	getAllMeals,
@@ -83,6 +87,8 @@ const swaggerOptions = {
 			schemas: {
 				CreateUserBody,
 				LoginUserBody,
+				RequestPasswordResetBody,
+				ResetPasswordBody,
 				Meal,
 				Order,
 				OrderSchema,
@@ -90,20 +96,26 @@ const swaggerOptions = {
 			},
 		},
 		paths: {
-			"/register": {
+			"/auth/register": {
 				post: createUser,
 			},
-			"/login": {
+			"/auth/login": {
 				post: loginUser,
 			},
-			"/me": {
+			"/auth/me": {
 				get: getMe,
 			},
-			"/users": {
+			"/auth/users": {
 				get: getAllUsers,
 			},
-			"/users/{id}": {
+			"/auth/users/{id}": {
 				delete: deleteUserById,
+			},
+			"/auth/forgot-password": {
+				post: requestPasswordReset,
+			},
+			"/auth/reset-password/:id/:token": {
+				post: resetPassword,
 			},
 			"/meals": { get: getAllMeals, post: createMeals },
 			"/meals/{id}": {
@@ -128,6 +140,7 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 const setupSwagger = (app) => {
+	// Swagger Page
 	app.use(
 		"/api/v1/docs",
 		swaggerUi.serve,
@@ -139,6 +152,12 @@ const setupSwagger = (app) => {
 				"https://static1.smartbear.co/swagger/media/assets/swagger_fav.png",
 		})
 	);
+
+	// Documentation in JSON format
+	app.get("/api/v1/docs.json", (req, res) => {
+		res.setHeader("Content-Type", "application/json");
+		res.send(swaggerDocs);
+	});
 };
 
 module.exports = setupSwagger;
